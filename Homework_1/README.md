@@ -19,6 +19,7 @@
     	g++ .\EE569_HW1_Problem2.cpp -o EE569_Hw1_Problem2.exe
     	g++ .\EE569_HW1_Problem3.cpp -o EE569_Hw1_Problem3.exe
 <br>
+
 ---
 #### CPP SOURCE CODE : [Problem1] Project Overview
 ---
@@ -35,6 +36,7 @@ This source code file contains the solutions to Problem 1 part(a), part(b) and p
 3. After each part's execution, the program will generate several new Image raw files containing the processing results.
 	The generated files are named as the original file names with a suffix. Such as the demosaiced image will be named as **"OriginalFile_demosaiced.raw"**. 
 <br>
+
 ---
 ####    MATLAB SCRIPT : [Problem1 PART C] Project Overview
 ---
