@@ -77,7 +77,7 @@ imshow(GradData1,[]);
 title('Magnititude map for Image: ' + FileName1);
 
 %Get Magnitude map and the final binary map
-ThresHold1 = max(max(GradData1)) * 0.59;
+ThresHold1 = max(max(GradData1)) * 0.609;
 ResultData1 = zeros(Row, Col, 1);
 for nRow = 1:Row
     for nCol = 1:Col
@@ -89,9 +89,9 @@ end
 
 subplot(2,2,4);
 imshow(ResultData1,[]);
-title('Edge Detection result for Image: ' + FileName1);
+title('Sobel Edge Detection result for Image: ' + FileName1);
 
-writeraw(ResultData1, extractBefore(FileName1, ".raw")+"_SobelEdge.raw")
+writeraw(ResultData1, extractBefore(FileName1, ".raw")+"_SobelEdge.raw");
 
 % For Image 2
 
@@ -155,25 +155,40 @@ end
 
 subplot(2,2,4);
 imshow(ResultData2,[]);
-title('Edge Detection result for Image: ' + FileName2);
+title('Sobel Edge Detection result for Image: ' + FileName2);
 
 writeraw(ResultData2, extractBefore(FileName2, ".raw")+"_SobelEdge.raw");
 
 
 
 %% Problem 1 - B
-% 
-% CannyResult1 = edge(OriData1_YUV, "canny");
-% 
-% figure(3);
-% imshow(CannyResult1,[]);
+
+CannyResult1 = edge(OriData1_YUV, "canny", [0.16,0.42], 2.2);
+
+figure(3);
+sgtitle("Problem 1-b results")
+subplot(2,2,1);
+imshow(OriData1_YUV, []);
+title("Original Image of: "+ FileName1);
+subplot(2,2,2);
+imshow(CannyResult1,[]);
+title("Canny detection results of: "+ FileName1);
+
+writeraw(CannyResult1*255, extractBefore(FileName1, ".raw")+"_CannyEdge.raw");
+
+CannyResult2 = edge(OriData2_YUV, "canny", [0.11,0.51], 2.1);
+
+subplot(2,2,3);
+imshow(OriData2_YUV, []);
+title("Original Image of: "+ FileName2);
+subplot(2,2,4);
+imshow(CannyResult2,[]);
+title("Canny detection results of: "+ FileName2);
+
+writeraw(CannyResult2*255, extractBefore(FileName2, ".raw")+"_CannyEdge.raw");
 
 
-
-
-
-
-
+%% Problem 1 - C
 
 
 
