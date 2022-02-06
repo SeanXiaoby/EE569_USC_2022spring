@@ -1,4 +1,4 @@
-function Output = NormalizeImage(InputData, min, max);
+function Output = NormalizeImage(InputData, lowerB, upperB);
 %NORMALIZEIMAGE Normalize the matrix into a certain range
 %   Usage:      NormalizeImage(InputData, [min,max])
 %   InputData:  The input matrix
@@ -9,7 +9,10 @@ function Output = NormalizeImage(InputData, min, max);
 
 VecData = reshape(InputData, [1, Row*Col]);
 
-VecData = round(normalize(VecData, "range", [min, max]));
+minValue = min(VecData);
+maxValue = max(VecData);
+
+VecData = round((VecData - minValue) / (maxValue - minValue) *upperB + lowerB);
 
 Output = reshape(VecData, [Row, Col]);
 

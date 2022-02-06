@@ -1,6 +1,13 @@
+%   EE569 Homework Problem 1 solutions
+%   Author: Boyang Xiao
+%   USC id: 3326730274
+%   email:  boyangxi@usc.edu
+%   Date:   2/6/2022
+
 clear;
 close all;
 
+verInfo = ver();
 %% Problem 1 - A
 
 % Import Image and convert to YUV space
@@ -61,8 +68,11 @@ end
 GradData1_X = NormalizeImage(GradData1_X, 0, 255);
 GradData1_Y = NormalizeImage(GradData1_Y, 0, 255);
 
-figure(1);
-sgtitle("Problem 1-a resutls: For Image: "+FileName1);
+figure("name", "Problem 1-a resutls: For Image: "+FileName1);
+try
+    sgtitle("Problem 1-a resutls: For Image: "+FileName1);
+catch
+end
 subplot(2,2,1);
 imshow(GradData1_X,[]);
 title('X gradient map for Image: ' + FileName1);
@@ -127,8 +137,11 @@ end
 GradData2_X = NormalizeImage(GradData2_X, 0, 255);
 GradData2_Y = NormalizeImage(GradData2_Y, 0, 255);
 
-figure(2);
-sgtitle("Problem 1-a resutls: For Image: "+FileName2);
+figure("name", "Problem 1-a resutls: For Image: "+FileName2);
+try
+    sgtitle("Problem 1-a resutls: For Image: "+FileName2);
+catch
+end
 subplot(2,2,1);
 imshow(GradData2_X,[]);
 title('X gradient map for Image: ' + FileName2);
@@ -165,8 +178,11 @@ writeraw(ResultData2, extractBefore(FileName2, ".raw")+"_SobelEdge.raw");
 
 CannyResult1 = edge(OriData1_YUV, "canny", [0.16,0.42], 2.2);
 
-figure(3);
-sgtitle("Problem 1-b results")
+figure("name", "Problem 1-b results");
+try
+    sgtitle("Problem 1-b resutls");
+catch
+end
 subplot(2,2,1);
 imshow(OriData1_YUV, []);
 title("Original Image of: "+ FileName1);
@@ -189,6 +205,8 @@ writeraw(CannyResult2*255, extractBefore(FileName2, ".raw")+"_CannyEdge.raw");
 
 
 %% Problem 1 - C
+
+clear;
 
 
 
