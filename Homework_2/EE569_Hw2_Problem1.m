@@ -7,7 +7,6 @@
 clear;
 close all;
 
-verInfo = ver();
 %% Problem 1 - A
 
 % Import Image and convert to YUV space
@@ -206,7 +205,7 @@ writeraw(CannyResult2*255, extractBefore(FileName2, ".raw")+"_CannyEdge.raw");
 
 %% Problem 1 - C
 
-clear;
+% clear;
 
 
 
