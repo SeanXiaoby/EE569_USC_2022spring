@@ -176,6 +176,7 @@ writeraw(ResultData2, extractBefore(FileName2, ".raw")+"_SobelEdge.raw");
 %% Problem 1 - B
 
 CannyResult1 = edge(OriData1_YUV, "canny", [0.16,0.42], 2.2);
+imshow(CannyResult1,[]);
 
 figure("name", "Problem 1-b results");
 try
@@ -195,7 +196,7 @@ CannyResult2 = edge(OriData2_YUV, "canny", [0.11,0.51], 2.1);
 
 subplot(2,2,3);
 imshow(OriData2_YUV, []);
-title("Original Image of: "+ FileName2);
+title("Original Image of: 1"+ FileName2);
 subplot(2,2,4);
 imshow(CannyResult2,[]);
 title("Canny detection results of: "+ FileName2);
@@ -205,7 +206,7 @@ writeraw(CannyResult2*255, extractBefore(FileName2, ".raw")+"_CannyEdge.raw");
 
 %% Problem 1 - C
 
-clear;
+% clear;
 
 
 
