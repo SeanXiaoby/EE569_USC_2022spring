@@ -183,24 +183,15 @@ try
     sgtitle("Problem 1-b resutls");
 catch
 end
-subplot(2,2,1);
-imshow(OriData1_YUV, []);
-title("Original Image of: "+ FileName1);
-subplot(2,2,2);
-imshow(CannyResult1,[]);
-title("Canny detection results of: "+ FileName1);
-
+subplot(2,2,1); imshow(OriData1_YUV, []); title("Original Image of: "+ FileName1);
+subplot(2,2,2); imshow(CannyResult1,[]); title("Canny detection results of: "+ FileName1);
 writeraw(CannyResult1*255, extractBefore(FileName1, ".raw")+"_CannyEdge.raw");
+
 
 CannyResult2 = edge(OriData2_YUV, "canny", [0.11,0.51], 2.1);
 
-subplot(2,2,3);
-imshow(OriData2_YUV, []);
-title("Original Image of: 1"+ FileName2);
-subplot(2,2,4);
-imshow(CannyResult2,[]);
-title("Canny detection results of: "+ FileName2);
-
+subplot(2,2,3); imshow(OriData2_YUV, []); title("Original Image of: "+ FileName2);
+subplot(2,2,4); imshow(CannyResult2,[]); title("Canny detection results of: "+ FileName2);
 writeraw(CannyResult2*255, extractBefore(FileName2, ".raw")+"_CannyEdge.raw");
 
 
@@ -209,8 +200,15 @@ writeraw(CannyResult2*255, extractBefore(FileName2, ".raw")+"_CannyEdge.raw");
 clear;
 
 addpath(genpath('./'));
-addpath(genpath('edges-master'));
-addpath(genpath('toolbox-master'));
+addpath(genpath('edges-master'), 'end');
+addpath(genpath('toolbox-master'), 'end');
+
+Row = 321;
+Col = 481;
+Channel = 3;
+
+FileName1 = "Tiger.jpg";
+FileName2 = "Pig.jpg";
 
 % % load pre-trained edge detection model and set opts (see edgesDemo.m)
 % model=load('models/forest/modelBsds'); model=model.model;
@@ -232,15 +230,36 @@ model.opts.nThreads=4;            % max number threads for evaluation
 model.opts.nms=0;                 % set to true to enable nms
 
 % detect edge and visualize results
-I = imread('Tiger.jpg');
-tic, E=edgesDetect(I,model); toc
-figure(1); im(I); figure(2); im(1-E);
+ImageData1 = imread(FileName1);
+SEresults1=edgesDetect(ImageData1,model);
+ImageData2 = imread(FileName2);
+SEresults2=edgesDetect(ImageData2,model);
 
+%Set the threshold and binarize the results
+Threshold1 = 0.18 * max(SEresults1);
+Threshold2 = 0.18 * max(SEresults2);
+EdgeMap1 = zeros(Row, Col);
+EdgeMap2 = zeros(Row, Col);
 
+for nRow = 1:Row
+    for nCol = 1:Col
+        if SEresults1(nRow, nCol) >= Threshold1   EdgeMap1(nRow, nCol) = 255;   end
+        if SEresults2(nRow, nCol) >= Threshold2   EdgeMap2(nRow, nCol) = 255;   end
+    end
+end
 
-
-
-
+figure("name", "Problem 1-C results");
+try
+    sgtitle("Problem 1-C resutls");
+catch
+end
+subplot(2,3,1); imshow(ImageData1, []);  title("Original Image of: "+ FileName1);
+subplot(2,3,2); imshow(SEresults1, []);  title("SE detection results of: "+ FileName1);
+subplot(2,3,3); imshow(EdgeMap1, []);  title("Binary Edge map of: "+ FileName1);
+subplot(2,3,4); imshow(ImageData2, []);  title("Original Image of: "+ FileName2);
+subplot(2,3,5); imshow(SEresults2, []);  title("SE detection results of: "+ FileName2);
+subplot(2,3,6); imshow(EdgeMap2, []);  title("Binary Edge map of: "+ FileName2);
+% imwrite(SEresults1, 'SEresults.jpg' );
 
 
 
