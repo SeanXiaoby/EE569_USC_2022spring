@@ -176,7 +176,6 @@ writeraw(ResultData2, extractBefore(FileName2, ".raw")+"_SobelEdge.raw");
 %% Problem 1 - B
 
 CannyResult1 = edge(OriData1_YUV, "canny", [0.16,0.42], 2.2);
-imshow(CannyResult1,[]);
 
 figure("name", "Problem 1-b results");
 try
@@ -261,4 +260,4 @@ subplot(2,3,5); imshow(SEresults2, []);  title("SE detection results of: "+ File
 subplot(2,3,6); imshow(EdgeMap2, []);  title("Binary Edge map of: "+ FileName2);
 % imwrite(SEresults1, 'SEresults.jpg' );
 
-imshow(groundTruth{1}.Boundaries, []);
+% imshow(groundTruth{1}.Boundaries, []);
