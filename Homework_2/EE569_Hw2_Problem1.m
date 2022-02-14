@@ -261,5 +261,4 @@ subplot(2,3,5); imshow(SEresults2, []);  title("SE detection results of: "+ File
 subplot(2,3,6); imshow(EdgeMap2, []);  title("Binary Edge map of: "+ FileName2);
 % imwrite(SEresults1, 'SEresults.jpg' );
 
-
-
+imshow(groundTruth{1}.Boundaries, []);
