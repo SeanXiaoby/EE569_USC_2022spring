@@ -6,11 +6,12 @@
 
 clear;
 close all;
+clc;
 
 %% Problem 1 - A
 
 % Import Image and convert to YUV space
-
+fprintf("Part 1-A: Starting now...\n");
 Row = 321;
 Col = 481;
 Channel = 3;
@@ -35,7 +36,7 @@ OriData1_YUV = RGBxYUV(OriginalData1,3);
 OriData2_YUV = RGBxYUV(OriginalData2,3);
 
 %For Image 1
-
+disp("Now conducting Sobel Edge detection for "+FileName1+"...");
 %Get X and Y gradient map
 GradData1_X = zeros(Row, Col, 1);
 GradData1_Y = zeros(Row, Col, 1);
@@ -103,7 +104,7 @@ title('Sobel Edge Detection result for Image: ' + FileName1);
 writeraw(ResultData1, extractBefore(FileName1, ".raw")+"_SobelEdge.raw");
 
 % For Image 2
-
+disp("Now conducting Sobel Edge detection for "+FileName2+"...");
 %Get X and Y gradient map
 
 GradData2_X = zeros(Row, Col, 1);
@@ -171,9 +172,13 @@ title('Sobel Edge Detection result for Image: ' + FileName2);
 
 writeraw(ResultData2, extractBefore(FileName2, ".raw")+"_SobelEdge.raw");
 
-
+%Rename and cache for Part 1-d evaluation
+SobelResult1 = ResultData1;
+SobelResult2 = ResultData2;
 
 %% Problem 1 - B
+fprintf("\nPart 1-B: Starting now...\n");
+disp("Now conducting Canny Edge detection for "+FileName1+"...");
 
 CannyResult1 = edge(OriData1_YUV, "canny", [0.16,0.42], 2.2);
 
@@ -186,6 +191,7 @@ subplot(2,2,1); imshow(OriData1_YUV, []); title("Original Image of: "+ FileName1
 subplot(2,2,2); imshow(CannyResult1,[]); title("Canny detection results of: "+ FileName1);
 writeraw(CannyResult1*255, extractBefore(FileName1, ".raw")+"_CannyEdge.raw");
 
+disp("Now conducting Canny Edge detection for "+FileName2+"...");
 
 CannyResult2 = edge(OriData2_YUV, "canny", [0.11,0.51], 2.1);
 
@@ -196,18 +202,21 @@ writeraw(CannyResult2*255, extractBefore(FileName2, ".raw")+"_CannyEdge.raw");
 
 %% Problem 1 - C
 
-clear;
-
+% clear;
+fprintf("\nPart 1-C: Starting now...\n");
+OriginFolder = pwd;
+addpath(genpath('edges-master'));
+addpath(genpath('toolbox-master'));
 addpath(genpath('./'));
-addpath(genpath('edges-master'), 'end');
-addpath(genpath('toolbox-master'), 'end');
+
+disp("Now conducting Structured Edge detection...");
 
 Row = 321;
 Col = 481;
 Channel = 3;
 
-FileName1 = "Tiger.jpg";
-FileName2 = "Pig.jpg";
+FileName1 = 'Tiger.jpg';
+FileName2 = 'Pig.jpg';
 
 % % load pre-trained edge detection model and set opts (see edgesDemo.m)
 % model=load('models/forest/modelBsds'); model=model.model;
@@ -228,6 +237,7 @@ model.opts.nTreesEval=4;          % for top speed set nTreesEval=1
 model.opts.nThreads=4;            % max number threads for evaluation
 model.opts.nms=0;                 % set to true to enable nms
 
+cd (OriginFolder);
 % detect edge and visualize results
 ImageData1 = imread(FileName1);
 SEresults1=edgesDetect(ImageData1,model);
@@ -258,6 +268,105 @@ subplot(2,3,3); imshow(EdgeMap1, []);  title("Binary Edge map of: "+ FileName1);
 subplot(2,3,4); imshow(ImageData2, []);  title("Original Image of: "+ FileName2);
 subplot(2,3,5); imshow(SEresults2, []);  title("SE detection results of: "+ FileName2);
 subplot(2,3,6); imshow(EdgeMap2, []);  title("Binary Edge map of: "+ FileName2);
-% imwrite(SEresults1, 'SEresults.jpg' );
 
-% imshow(groundTruth{1}.Boundaries, []);
+
+%% Part 1-d Edge detection evaluation
+fprintf("\nPart 1-D: Starting now...\n");
+load('Tiger_GT.mat');
+Tiger_GT = groundTruth;
+load('Pig_GT.mat');
+Pig_GT = groundTruth;
+
+%Evaluation for Sobel 
+SobelPRF = zeros(3,5,2);
+fprintf("\nEvaluation results for Sobel detector:\n");
+fprintf("GT No.\t\t\tPrecision\t\t\tRecall\t\t\tF-measure\n");
+for GTi = 1:5
+    [SobelPRF(1, GTi,1), SobelPRF(2, GTi,1)] = PrecisionRecall(SobelResult1, Tiger_GT{GTi}.Boundaries);
+    SobelPRF(3, GTi,1) = 2 * SobelPRF(1, GTi,1) * SobelPRF(2, GTi,1) / (SobelPRF(1, GTi,1) + SobelPRF(2, GTi,1));
+    [SobelPRF(1, GTi,2), SobelPRF(2, GTi,2)] = PrecisionRecall(SobelResult2, Pig_GT{GTi}.Boundaries);
+    SobelPRF(3, GTi,2) = 2 * SobelPRF(1, GTi,2) * SobelPRF(2, GTi,2) / (SobelPRF(1, GTi,2) + SobelPRF(2, GTi,2));
+    fprintf("%d-%s\t\t%f\t\t\t%f\t\t%f\n",GTi,FileName1,SobelPRF(1, GTi,1),SobelPRF(2, GTi,1),SobelPRF(3, GTi,1) );
+    fprintf("%d-%s\t\t%f\t\t\t%f\t\t%f\n",GTi,FileName2,SobelPRF(1, GTi,2),SobelPRF(2, GTi,2),SobelPRF(3, GTi,2) );
+end
+fprintf("The average F-measure for Sobel Detector for "+FileName1+" is %f\n", mean(SobelPRF(3,:,1)) );
+fprintf("The average F-measure for Sobel Detector for "+FileName2+" is %f\n", mean(SobelPRF(3,:,2)));
+fprintf("The average F-measure for Sobel Detector is %f\n", (mean(SobelPRF(3,:,1))+ mean(SobelPRF(3,:,2)))/2);
+
+%Evaluation for Canny 
+CannyPRF = zeros(3,5,2);
+fprintf("\nEvaluation results for Canny detector:\n");
+fprintf("GT No.\t\t\tPrecision\t\t\tRecall\t\t\tF-measure\n");
+for GTi = 1:5
+    [CannyPRF(1, GTi,1), CannyPRF(2, GTi,1)] = PrecisionRecall(CannyResult1, Tiger_GT{GTi}.Boundaries);
+    CannyPRF(3, GTi,1) = 2 * CannyPRF(1, GTi,1) * CannyPRF(2, GTi,1) / (CannyPRF(1, GTi,1) + CannyPRF(2, GTi,1));
+    [CannyPRF(1, GTi,2), CannyPRF(2, GTi,2)] = PrecisionRecall(CannyResult2, Pig_GT{GTi}.Boundaries);
+    CannyPRF(3, GTi,2) = 2 * CannyPRF(1, GTi,2) * CannyPRF(2, GTi,2) / (CannyPRF(1, GTi,2) + CannyPRF(2, GTi,2));
+    fprintf("%d-%s\t\t%f\t\t\t%f\t\t%f\n",GTi,FileName1,CannyPRF(1, GTi,1),CannyPRF(2, GTi,1),CannyPRF(3, GTi,1) );
+    fprintf("%d-%s\t\t%f\t\t\t%f\t\t%f\n",GTi,FileName2,CannyPRF(1, GTi,2),CannyPRF(2, GTi,2),CannyPRF(3, GTi,2) );
+end
+fprintf("The average F-measure for Canny Detector for "+FileName1+" is %f\n", mean(CannyPRF(3,:,1)) );
+fprintf("The average F-measure for Canny Detector for "+FileName2+" is %f\n", mean(CannyPRF(3,:,2)));
+fprintf("The average F-measure for Canny Detector is %f\n", (mean(CannyPRF(3,:,1))+ mean(CannyPRF(3,:,2)))/2);
+
+%Evaluation for Canny 
+SEPRF = zeros(3,5,2);
+fprintf("\nEvaluation results for SE detector:\n");
+fprintf("GT No.\t\t\tPrecision\t\t\tRecall\t\t\tF-measure\n");
+for GTi = 1:5
+    [SEPRF(1, GTi,1), SEPRF(2, GTi,1)] = PrecisionRecall(EdgeMap1, Tiger_GT{GTi}.Boundaries);
+    SEPRF(3, GTi,1) = 2 * SEPRF(1, GTi,1) * SEPRF(2, GTi,1) / (SEPRF(1, GTi,1) + SEPRF(2, GTi,1));
+    [SEPRF(1, GTi,2), SEPRF(2, GTi,2)] = PrecisionRecall(EdgeMap2, Pig_GT{GTi}.Boundaries);
+    SEPRF(3, GTi,2) = 2 * SEPRF(1, GTi,2) * SEPRF(2, GTi,2) / (SEPRF(1, GTi,2) + SEPRF(2, GTi,2));
+    fprintf("%d-%s\t\t%f\t\t\t%f\t\t%f\n",GTi,FileName1,SEPRF(1, GTi,1),SEPRF(2, GTi,1),SEPRF(3, GTi,1) );
+    fprintf("%d-%s\t\t%f\t\t\t%f\t\t%f\n",GTi,FileName2,SEPRF(1, GTi,2),SEPRF(2, GTi,2),SEPRF(3, GTi,2) );
+end
+fprintf("The average F-measure for SE Detector for "+FileName1+" is %f\n", mean(SEPRF(3,:,1)) );
+fprintf("The average F-measure for SE Detector for "+FileName2+" is %f\n", mean(SEPRF(3,:,2)));
+fprintf("The average F-measure for SE Detector is %f\n", (mean(SEPRF(3,:,1))+ mean(SEPRF(3,:,2)))/2);
+
+
+%Find out correlation between F-measure and threshold value for SE detector
+FandThres = zeros(3, 100); 
+nCount = 0;
+h=waitbar(0,'Computing F-measures for different threshold values...');
+for iThreshold = 0.01 :0.01: 1
+    waitbar(iThreshold, h);
+    nCount = nCount +1;
+    newEdgeMap1= zeros(Row, Col);
+    newEdgeMap2= zeros(Row, Col);
+    Tval1 = iThreshold * max(SEresults1);
+    Tval2 = iThreshold * max(SEresults2);
+    for nRow = 1:Row
+        for nCol = 1:Col
+            if SEresults1(nRow, nCol) >= Tval1   newEdgeMap1(nRow, nCol) = 255;   end
+            if SEresults2(nRow, nCol) >= Tval2   newEdgeMap2(nRow, nCol) = 255;   end
+        end
+    end
+    FandThres(1, nCount) = iThreshold;
+
+    Fmeasures = zeros(2,5);
+
+    for GTi = 1:5
+        [Pval, Rval] = PrecisionRecall(newEdgeMap1, Tiger_GT{GTi}.Boundaries);
+        Fmeasures(1, GTi) = 2 * Pval * Rval / (Pval + Rval);
+        [Pval, Rval] = PrecisionRecall(newEdgeMap1, Pig_GT{GTi}.Boundaries);
+        Fmeasures(2, GTi) = 2 * Pval * Rval / (Pval + Rval);
+    end
+    FandThres(2, nCount) = mean(Fmeasures(1, :));
+    FandThres(3, nCount) = mean(Fmeasures(2, :));
+    
+end
+delete(h);
+
+figure("name", "Problem 1-D results");
+hold on;
+plot(FandThres(1,:)*100, FandThres(2,:), 'linewidth' ,2);
+hold on;
+plot(FandThres(1,:)*100, FandThres(3,:), 'linewidth' ,2);
+xlabel('Threshold values in percentage(%)');
+ylabel('F-measures');
+legend(FileName1, FileName2);
+hold off;
+
+
