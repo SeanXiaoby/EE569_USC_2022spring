@@ -172,6 +172,8 @@ title('Sobel Edge Detection result for Image: ' + FileName2);
 
 writeraw(ResultData2, extractBefore(FileName2, ".raw")+"_SobelEdge.raw");
 
+fprintf("\nThe results for Part 1-a are shown in Figure 1 and Figure 2\n");
+
 %Rename and cache for Part 1-d evaluation
 SobelResult1 = ResultData1;
 SobelResult2 = ResultData2;
@@ -199,6 +201,7 @@ subplot(2,2,3); imshow(OriData2_YUV, []); title("Original Image of: "+ FileName2
 subplot(2,2,4); imshow(CannyResult2,[]); title("Canny detection results of: "+ FileName2);
 writeraw(CannyResult2*255, extractBefore(FileName2, ".raw")+"_CannyEdge.raw");
 
+fprintf("\nThe results for Part 1-b are shown in Figure 3\n");
 
 %% Problem 1 - C
 
@@ -269,6 +272,7 @@ subplot(2,3,4); imshow(ImageData2, []);  title("Original Image of: "+ FileName2)
 subplot(2,3,5); imshow(SEresults2, []);  title("SE detection results of: "+ FileName2);
 subplot(2,3,6); imshow(EdgeMap2, []);  title("Binary Edge map of: "+ FileName2);
 
+fprintf("\nThe results for Part 1-c are shown in Figure 4\n");
 
 %% Part 1-d Edge detection evaluation
 fprintf("\nPart 1-D: Starting now...\n");
@@ -327,6 +331,7 @@ fprintf("The average F-measure for SE Detector is %f\n", (mean(SEPRF(3,:,1))+ me
 
 
 %Find out correlation between F-measure and threshold value for SE detector
+fprintf("\nNow calculating the F-measure scores under different thresholds for SE detector...\nThis might take longer time than expacted. Please wait...\n");
 FandThres = zeros(3, 100); 
 nCount = 0;
 h=waitbar(0,'Computing F-measures for different threshold values...');
@@ -361,6 +366,7 @@ delete(h);
 
 figure("name", "Problem 1-D results");
 hold on;
+title("F-measure scores under different thresholds for SE detector");
 plot(FandThres(1,:)*100, FandThres(2,:), 'linewidth' ,2);
 hold on;
 plot(FandThres(1,:)*100, FandThres(3,:), 'linewidth' ,2);
@@ -369,4 +375,4 @@ ylabel('F-measures');
 legend(FileName1, FileName2);
 hold off;
 
-
+fprintf("\nThe results for Part 1-d are shown in the command lines above and Figure 5.\n");
