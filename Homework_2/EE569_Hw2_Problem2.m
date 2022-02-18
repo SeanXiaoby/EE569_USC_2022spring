@@ -28,6 +28,7 @@ imshow(OriginalData1,[]);
 title("original Image");
 
 % Fixed thresholding
+fprintf("\nApplying fixed thresholding to the image...\n");
 HTresults1 = zeros(Row, Col, Channel);
 Threshold1 = 128;
 
@@ -43,6 +44,7 @@ writeraw(HTresults1, "bridge_Halftone_fixed.raw");
 
 
 % Random thresholding
+fprintf("\nApplying random(uniform) thresholding to the image...\n");
 HTresults2 = zeros(Row, Col, Channel);
 
 for nRow = 1: Row
@@ -58,6 +60,8 @@ title("Half-tone with random threshold");
 writeraw(HTresults2, "bridge_Halftone_random.raw");
 
 %% Dithering
+
+fprintf("\nApplying Dithering methods with different matrixs to the image...\n");
 
 % Firstly apply I2 dithering
 DTresults1 = zeros(Row, Col);
@@ -111,12 +115,197 @@ for nRow = 1: Row
 end
 
 subplot(2,3,6);
-imshow(DTresults2,[]);
+imshow(DTresults3,[]);
 title("Half-tone with DIthering I32");
-writeraw(DTresults2, "bridge_Halftone_dithering32.raw");
+writeraw(DTresults3, "bridge_Halftone_dithering32.raw");
+
+fprintf("\nThe results for Part 2-A are shown in Figure 1.\n");
 
 
+%% Part 1-b Error diffusion
+
+fprintf("\nPart 2-b starting now...\n")
+
+Threshold = 128;
+
+figure("name", "Problem 2-b results");
+try
+    sgtitle("Problem 2-b: Half-toning: Error Diffusion results");
+catch
+end
+subplot(2,2,1);
+imshow(OriginalData1,[]);
+title("original Image");
+
+%%Floyd Steinburg's matrix setup
+fprintf("\nApplying Floyd Steingerg's error diffusion method to the image...\n");
+
+EDmatrix1 = [0 0 0; 0 0 7; 3 5 1] / 16;
+Ftilde1 = zeros(Row+2, Col+2);
+Ftilde1(2:Row+1, 2:Col+1) = OriginalData1;
+
+EDresults1 = zeros(Row+2, Col+2);
+
+for nRow = 2: Row+1
+    if mod(nRow, 2) == 0
+        for nCol = 2:Col+1 
+            if Ftilde1(nRow, nCol) >= Treshold  
+                EDresults1(nRow, nCol) = 255;
+            end
+    
+            ErrorVal = Ftilde1(nRow, nCol) - EDresults1(nRow, nCol);
+            Ftilde1(nRow, nCol+1) = Ftilde1(nRow, nCol+1) + ErrorVal*EDmatrix1(2,3);
+            Ftilde1(nRow+1, nCol-1) = Ftilde1(nRow+1, nCol-1) + ErrorVal*EDmatrix1(3,1);
+            Ftilde1(nRow+1, nCol) = Ftilde1(nRow+1, nCol) + ErrorVal*EDmatrix1(3,2);
+            Ftilde1(nRow+1, nCol+1) = Ftilde1(nRow+1, nCol+1) + ErrorVal*EDmatrix1(3,3);
+
+        end
+    else
+        for nCol = Col+1 :-1:2
+            if Ftilde1(nRow, nCol) >= Treshold  
+                EDresults1(nRow, nCol) = 255;
+            end
+    
+            ErrorVal = Ftilde1(nRow, nCol) - EDresults1(nRow, nCol);
+            Ftilde1(nRow, nCol-1) = Ftilde1(nRow, nCol-1) + ErrorVal*EDmatrix1(2,3);
+            Ftilde1(nRow+1, nCol+1) = Ftilde1(nRow+1, nCol+1) + ErrorVal*EDmatrix1(3,1);
+            Ftilde1(nRow+1, nCol) = Ftilde1(nRow+1, nCol) + ErrorVal*EDmatrix1(3,2);
+            Ftilde1(nRow+1, nCol-1) = Ftilde1(nRow+1, nCol-1) + ErrorVal*EDmatrix1(3,3);
+        end
+    end
+end
+
+EDresults1 = EDresults1(2:Row+1, 2:Col+1);
+subplot(2,2,2);
+imshow(EDresults1,[]);
+title("Error diffusion with Floyd Steinburg matrix");
+writeraw(EDresults1, "bridge_Halftone_FloydED.raw");
 
 
+% JJN matrix
+fprintf("\nApplying JJN's error diffusion method to the image...\n");
 
+EDmatrix2 = [0 0 0 0 0; 0 0 0 0 0; 0 0 0 7 5; 3 5 7 5 3; 1 3 5 3 1] / 48;
+Ftilde2 = zeros(Row+4, Col+4);
+Ftilde2(3:Row+2, 3:Col+2) = OriginalData1;
+
+EDresults2 = zeros(Row+4, Col+4);
+
+for nRow = 3: Row+2
+    if mod(nRow, 2) == 1
+        for nCol = 3:Col+2 
+            if Ftilde2(nRow, nCol) >= Treshold  
+                EDresults2(nRow, nCol) = 255;
+            end
+    
+            ErrorVal = Ftilde2(nRow, nCol) - EDresults2(nRow, nCol);
+
+            Ftilde2(nRow, nCol+1) = Ftilde2(nRow, nCol+1) + ErrorVal*EDmatrix2(3,4);
+            Ftilde2(nRow, nCol+2) = Ftilde2(nRow, nCol+2) + ErrorVal*EDmatrix2(3,5);
+            Ftilde2(nRow+1, nCol-2) = Ftilde2(nRow+1, nCol-2) + ErrorVal*EDmatrix2(4,1);
+            Ftilde2(nRow+1, nCol-1) = Ftilde2(nRow+1, nCol-1) + ErrorVal*EDmatrix2(4,2);
+            Ftilde2(nRow+1, nCol) = Ftilde2(nRow+1, nCol) + ErrorVal*EDmatrix2(4,3);
+            Ftilde2(nRow+1, nCol+1) = Ftilde2(nRow+1, nCol+1) + ErrorVal*EDmatrix2(4,4);
+            Ftilde2(nRow+1, nCol+2) = Ftilde2(nRow+1, nCol+2) + ErrorVal*EDmatrix2(4,5);
+            Ftilde2(nRow+2, nCol-2) = Ftilde2(nRow+2, nCol-2) + ErrorVal*EDmatrix2(5,1);
+            Ftilde2(nRow+2, nCol-1) = Ftilde2(nRow+2, nCol-1) + ErrorVal*EDmatrix2(5,2);
+            Ftilde2(nRow+2, nCol) = Ftilde2(nRow+2, nCol) + ErrorVal*EDmatrix2(5,3);
+            Ftilde2(nRow+2, nCol+1) = Ftilde2(nRow+2, nCol+1) + ErrorVal*EDmatrix2(5,4);
+            Ftilde2(nRow+2, nCol+2) = Ftilde2(nRow+2, nCol+2) + ErrorVal*EDmatrix2(5,5);
+
+        end
+    else
+        for nCol = Col+2 :-1:3
+            if Ftilde2(nRow, nCol) >= Treshold  
+                EDresults2(nRow, nCol) = 255;
+            end
+
+            ErrorVal = Ftilde2(nRow, nCol) - EDresults2(nRow, nCol);
+
+            Ftilde2(nRow, nCol-1) = Ftilde2(nRow, nCol-1) + ErrorVal*EDmatrix2(3,4);
+            Ftilde2(nRow, nCol-2) = Ftilde2(nRow, nCol-2) + ErrorVal*EDmatrix2(3,5);
+            Ftilde2(nRow+1, nCol+2) = Ftilde2(nRow+1, nCol+2) + ErrorVal*EDmatrix2(4,1);
+            Ftilde2(nRow+1, nCol+1) = Ftilde2(nRow+1, nCol+1) + ErrorVal*EDmatrix2(4,2);
+            Ftilde2(nRow+1, nCol) = Ftilde2(nRow+1, nCol) + ErrorVal*EDmatrix2(4,3);
+            Ftilde2(nRow+1, nCol-1) = Ftilde2(nRow+1, nCol-1) + ErrorVal*EDmatrix2(4,4);
+            Ftilde2(nRow+1, nCol-2) = Ftilde2(nRow+1, nCol-2) + ErrorVal*EDmatrix2(4,5);
+            Ftilde2(nRow+2, nCol+2) = Ftilde2(nRow+2, nCol+2) + ErrorVal*EDmatrix2(5,1);
+            Ftilde2(nRow+2, nCol+1) = Ftilde2(nRow+2, nCol+1) + ErrorVal*EDmatrix2(5,2);
+            Ftilde2(nRow+2, nCol) = Ftilde2(nRow+2, nCol) + ErrorVal*EDmatrix2(5,3);
+            Ftilde2(nRow+2, nCol-1) = Ftilde2(nRow+2, nCol-1) + ErrorVal*EDmatrix2(5,4);
+            Ftilde2(nRow+2, nCol-2) = Ftilde2(nRow+2, nCol-2) + ErrorVal*EDmatrix2(5,5);
+        end
+    end
+end
+
+EDresults2 = EDresults2(3:Row+2, 3:Col+2);
+subplot(2,2,3);
+imshow(EDresults2,[]);
+title("Error diffusion with JJN matrix");
+writeraw(EDresults2, "bridge_Halftone_JJNED.raw");
+
+
+% Stucki matrix
+fprintf("\nApplying Stucki's error diffusion method to the image...\n");
+
+EDmatrix2 = [0 0 0 0 0; 0 0 0 0 0; 0 0 0 8 4; 2 4 8 4 2; 1 2 4 2 1] / 42;
+Ftilde2 = zeros(Row+4, Col+4);
+Ftilde2(3:Row+2, 3:Col+2) = OriginalData1;
+
+EDresults2 = zeros(Row+4, Col+4);
+
+for nRow = 3: Row+2
+    if mod(nRow, 2) == 1
+        for nCol = 3:Col+2 
+            if Ftilde2(nRow, nCol) >= Treshold  
+                EDresults2(nRow, nCol) = 255;
+            end
+    
+            ErrorVal = Ftilde2(nRow, nCol) - EDresults2(nRow, nCol);
+
+            Ftilde2(nRow, nCol+1) = Ftilde2(nRow, nCol+1) + ErrorVal*EDmatrix2(3,4);
+            Ftilde2(nRow, nCol+2) = Ftilde2(nRow, nCol+2) + ErrorVal*EDmatrix2(3,5);
+            Ftilde2(nRow+1, nCol-2) = Ftilde2(nRow+1, nCol-2) + ErrorVal*EDmatrix2(4,1);
+            Ftilde2(nRow+1, nCol-1) = Ftilde2(nRow+1, nCol-1) + ErrorVal*EDmatrix2(4,2);
+            Ftilde2(nRow+1, nCol) = Ftilde2(nRow+1, nCol) + ErrorVal*EDmatrix2(4,3);
+            Ftilde2(nRow+1, nCol+1) = Ftilde2(nRow+1, nCol+1) + ErrorVal*EDmatrix2(4,4);
+            Ftilde2(nRow+1, nCol+2) = Ftilde2(nRow+1, nCol+2) + ErrorVal*EDmatrix2(4,5);
+            Ftilde2(nRow+2, nCol-2) = Ftilde2(nRow+2, nCol-2) + ErrorVal*EDmatrix2(5,1);
+            Ftilde2(nRow+2, nCol-1) = Ftilde2(nRow+2, nCol-1) + ErrorVal*EDmatrix2(5,2);
+            Ftilde2(nRow+2, nCol) = Ftilde2(nRow+2, nCol) + ErrorVal*EDmatrix2(5,3);
+            Ftilde2(nRow+2, nCol+1) = Ftilde2(nRow+2, nCol+1) + ErrorVal*EDmatrix2(5,4);
+            Ftilde2(nRow+2, nCol+2) = Ftilde2(nRow+2, nCol+2) + ErrorVal*EDmatrix2(5,5);
+
+        end
+    else
+        for nCol = Col+2 :-1: 3
+            if Ftilde2(nRow, nCol) >= Treshold  
+                EDresults2(nRow, nCol) = 255;
+            end
+
+            ErrorVal = Ftilde2(nRow, nCol) - EDresults2(nRow, nCol);
+
+            Ftilde2(nRow, nCol-1) = Ftilde2(nRow, nCol-1) + ErrorVal*EDmatrix2(3,4);
+            Ftilde2(nRow, nCol-2) = Ftilde2(nRow, nCol-2) + ErrorVal*EDmatrix2(3,5);
+            Ftilde2(nRow+1, nCol+2) = Ftilde2(nRow+1, nCol+2) + ErrorVal*EDmatrix2(4,1);
+            Ftilde2(nRow+1, nCol+1) = Ftilde2(nRow+1, nCol+1) + ErrorVal*EDmatrix2(4,2);
+            Ftilde2(nRow+1, nCol) = Ftilde2(nRow+1, nCol) + ErrorVal*EDmatrix2(4,3);
+            Ftilde2(nRow+1, nCol-1) = Ftilde2(nRow+1, nCol-1) + ErrorVal*EDmatrix2(4,4);
+            Ftilde2(nRow+1, nCol-2) = Ftilde2(nRow+1, nCol-2) + ErrorVal*EDmatrix2(4,5);
+            Ftilde2(nRow+2, nCol+2) = Ftilde2(nRow+2, nCol+2) + ErrorVal*EDmatrix2(5,1);
+            Ftilde2(nRow+2, nCol+1) = Ftilde2(nRow+2, nCol+1) + ErrorVal*EDmatrix2(5,2);
+            Ftilde2(nRow+2, nCol) = Ftilde2(nRow+2, nCol) + ErrorVal*EDmatrix2(5,3);
+            Ftilde2(nRow+2, nCol-1) = Ftilde2(nRow+2, nCol-1) + ErrorVal*EDmatrix2(5,4);
+            Ftilde2(nRow+2, nCol-2) = Ftilde2(nRow+2, nCol-2) + ErrorVal*EDmatrix2(5,5);
+        end
+    end
+end
+
+EDresults2 = EDresults2(3:Row+2, 3:Col+2);
+subplot(2,2,4);
+imshow(EDresults2,[]);
+title("Error diffusion with Stucki matrix");
+writeraw(EDresults2, "bridge_Halftone_StuckiED.raw");
+
+fprintf("\nThe results for Part 2-B are shown in Figure 2.\n");
 
