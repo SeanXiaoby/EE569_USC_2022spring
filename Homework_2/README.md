@@ -29,7 +29,7 @@
 <ul>
 <li>For  EE569_hw2_Problem1.m, please use MATLAB 2017b to run it.</li>
 <li>For  EE569_hw2_Problem2.m and EE569_hw2_Problem3.m, please use MATLAB 2021b to run them.</li>
-</ol>
+</ul>
 
 #### :warning: Image files name specifications:
 The codes default that the image names are as same as those given to us to test our codes. Therefore, no interfaces are left to get the image files names from the commond lines.
@@ -58,7 +58,7 @@ This source code file contains the solutions to Problem 1.
 <li>Open the source code in MATLAB 2017b and run the codes.</li>
 <li>The edge detection results will be shown in the figure windows, and some of the results will be saved as raw images with a suffix. For example, the canny detection results will be saved as "OriginalFile_CannyEdge.raw</li>
 <li>The edge detection evaluation results in Part 1-d will be shown in the commond lines as some tables. Please do pay attention to the commond lines.
-<ol>
+</ol>
 <br>
 
 ---
@@ -81,7 +81,7 @@ This source code file contains the solutions to Problem 2.
 <ol>
 <li>Open the source code in MATLAB 2021b and run the codes.</li>
 <li>The halftoning results will all be shown in the figure windows. And the results will also be saved as raw images with a suffix. For example, the fixed thresholding halftoning results will be "OriginalFile_fixed.raw".</li>
-<ol>
+</ol>
 <br>
 
 ---
@@ -104,5 +104,5 @@ This source code file contains the solutions to Problem 3.
 <ol>
 <li>Open the source codes in MATLAB 2021b and run the codes.</li>
 <li>The color halftoning results will all be shown in the figure windows. And the results will also be saved as raw images with a suffix. For example, the MBVQ-based error diffusion halftoning results will be "OriginalFile_MBVQ.raw".</li>
-<ol>
+</ol>
 <br>
