@@ -83,7 +83,7 @@ fprintf("Part 3-A's results are shown in Figure 1.\n")
 
 %% Problem 3-B
 fprintf("\nPart 3-B: Starting now...\n");
-tic;
+
 EDmatrix2 = [0 0 0; 0 0 7; 3 5 1] / 16;
 Ftilde2 = zeros(Row+2, Col+2 , Channel);
 Ftilde2(2:Row+1, 2:Col+1 , :) = OriginalData1;
@@ -134,7 +134,7 @@ title("Part 3-B results: Color image half-toning with MBVQ Error diffusion");
 imshow(rescale(HTresult2));
 writeraw(HTresult2, "bird_Halftone_MBVQ.raw");
 fprintf("Part 3-B's results are shown in Figure 2.\n")
-toc;
+
 
 %extra functions used in part 3-B
 
@@ -185,3 +185,5 @@ function [R, G, B] = getRGBval(charColor)
     end
 
 end
+
+
