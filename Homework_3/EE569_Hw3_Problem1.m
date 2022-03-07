@@ -131,7 +131,7 @@ for row = 1:MaxRow
     end
 end
 
-OriginData2 = readraw('Forky.raw', MaxRow, MaxCol, MaxChannel);
+OriginData2 = readraw('22.raw', MaxRow, MaxCol, MaxChannel);
 OutputData2 = zeros(MaxRow,MaxCol, MaxChannel);
 
 for row = 1:MaxRow
@@ -142,15 +142,20 @@ for row = 1:MaxRow
     end
 end
 
-% imshow(rescale(OutputImage));
+figure("name", "Forky_StarShape");
+imshow(rescale(OutputData1));
+figure("name", "22_StarShape");
+imshow(rescale(OutputData2));
 
-
+writeraw(OutputData1, "Forky_StarShape.raw");
+writeraw(OutputData2, "22_StarShape.raw");
 
 
 %% Star Image back to normal image
 
 OriginData1 = OutputData1;
 OriginData2 = OutputData2;
+
 
 % Coordinates transfer
 
@@ -258,27 +263,37 @@ end
 
 % Render output image
 
-OriginData1 = readraw('Forky.raw', MaxRow, MaxCol, MaxChannel);
 OutputData1 = zeros(MaxRow,MaxCol, MaxChannel);
-
-for row = 1:MaxRow
-    for col = 1:MaxCol
-        for channel = 1: MaxChannel
-            OutputData1(round(PosMatrix(row, col, 1)), round(PosMatrix(row,col,2)), channel) = OriginData1(row, col, channel);
-        end
-    end
-end
-
-OriginData2 = readraw('Forky.raw', MaxRow, MaxCol, MaxChannel);
 OutputData2 = zeros(MaxRow,MaxCol, MaxChannel);
 
+h = waitbar(0, 'Rendering output images');
+
 for row = 1:MaxRow
     for col = 1:MaxCol
         for channel = 1: MaxChannel
-            OutputData2(round(PosMatrix(row, col, 1)), round(PosMatrix(row,col,2)), channel) = OriginData2(row, col, channel);
+            startRow = 1;
+            startCol = 1;
+            for pRow = startRow:MaxRow-1
+                for pCol = startCol:MaxCol-1
+                    if row >= PosMatrix(pRow, pCol, 1) && row<= PosMatrix(pRow+1,pCol,1) && col >= PosMatrix(pRow, pCol, 2) && col<= PosMatrix(pRow,pCol+1,2)
+                        OutputData1(row,col,channel) = mean([OriginData1(pRow, pCol, channel) OriginData1(pRow+1, pCol, channel) OriginData1(pRow, pCol+1, channel) OriginData1(pRow+1, pCol+1, channel)]);
+                        OutputData2(row,col,channel) = mean([OriginData2(pRow, pCol, channel) OriginData2(pRow+1, pCol, channel) OriginData2(pRow, pCol+1, channel) OriginData2(pRow+1, pCol+1, channel)]);
+                        startRow = pRow;
+                        startCol = pCol;
+                    end
+                end
+            end
         end
     end
-end
+    waitbar(row/MaxRow, h);
+end 
 
-imshow(rescale(OutputImage1));
+delete(h);
 
+figure("name", "Forky_Restore");
+imshow(rescale(OutputData1));
+figure("name", "22_Restore");
+imshow(rescale(OutputData2));
+
+writeraw(OutputData1, "Forky_reversed.raw");
+writeraw(OutputData2, "22_reversed.raw");
