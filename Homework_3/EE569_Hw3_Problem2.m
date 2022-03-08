@@ -1,4 +1,4 @@
-%   EE569 Homework Problem 3 solutions
+%   EE569 Homework3 Problem 2 solutions
 %   Author: Boyang Xiao
 %   USC id: 3326730274
 %   email:  boyangxi@usc.edu
