@@ -156,7 +156,6 @@ writeraw(OutputData2, "22_StarShape.raw");
 OriginData1 = OutputData1;
 OriginData2 = OutputData2;
 
-
 % Coordinates transfer
 
 CoordiatesMatrix = [ 0 1 -164; -1 0 164; 0 0 1 ];
