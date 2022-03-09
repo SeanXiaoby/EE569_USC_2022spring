@@ -38,14 +38,22 @@ TransMat2 = projective2d(eye(3));
 TransMat3 = projective2d(eye(3));
 
 % Find correspondences between Images
-indexPairs12 = matchFeatures(features1, features2, 'Unique', true);
-indexPairs23 = matchFeatures(features2, features3, 'Unique', true);
+indexPairs12 = matchFeatures(features1, features2, 'Unique', true, MaxRatio=0.1);
+indexPairs23 = matchFeatures(features2, features3, 'Unique', true, MaxRatio=0.2);
 
 matchedPoints12_1 = points1(indexPairs12(:,1), :);
 matchedPoints12_2 = points2(indexPairs12(:,2), :);
 matchedPoints23_2 = points2(indexPairs23(:,1), :);
 matchedPoints23_3 = points3(indexPairs23(:,2), :);
 
+figure; ax = axes;
+showMatchedFeatures(LeftImg_gray,MidImg_gray,matchedPoints12_1,matchedPoints12_2,'montage','Parent',ax);
+title("Matching points detected between Left image and middle image");
+figure; ax = axes;
+showMatchedFeatures(MidImg_gray,RightImg_gray,matchedPoints23_2,matchedPoints23_3,'montage','Parent',ax);
+title("Matching points detected between Middle image and Right image");
+
+% cpselect(MidImg_gray, LeftImg_gray);
 
 % Get the transformation matrix between two images
 
@@ -54,6 +62,9 @@ TransMat2 = estimateGeometricTransform2D(matchedPoints12_1, matchedPoints12_2, '
 TransMat3 = estimateGeometricTransform2D(matchedPoints23_2, matchedPoints23_3, 'projective', 'Confidence', 99.9, 'MaxNumTrials', 2000);
 TransMat3.T = TransMat3.T * TransMat2.T;
 
+% LeftPts = [transpose(P1(1:4,:));ones(1,4)];
+% MidPts_1 = [transpose(P2(1:4,:));ones(1,4)];
+% TransMat2.T = MidPts_1/LeftPts;
 
 %% 
 % Compute the output limits for each transform.          
