@@ -85,6 +85,7 @@ end
 for row = 2:MaxRow+1
     for col = 2:MaxCol+1
         if Mtable(row, col) ~= 255
+            outputImage(row-1, col-1) = 0;
             continue;
         end
 
@@ -101,7 +102,7 @@ for row = 2:MaxRow+1
         for i = 1:28
             Goal = UncondPatterns_noD{i};
             if unitStr == UncondPatterns_noD{i}
-                outputImage(row-1, col-1) = 0;
+%                 outputImage(row-1, col-1) = 0;
                 flag = true;
                 tempFlag = true;
                 break;
@@ -115,13 +116,16 @@ for row = 2:MaxRow+1
         for i = 1:41
 
             % Add D marks
-            unitStr = AddDmark(unitStr, D_Mask{i});
+            unitStrD = AddDmark(unitStr, D_Mask{i});
             Goal = UncondPatterns_WithD{i};
-            if unitStr == UncondPatterns_WithD{i}
-                outputImage(row-1, col-1) = 0;
+            if unitStrD == UncondPatterns_WithD{i}
+%                 outputImage(row-1, col-1) = 0;
                 flag = true;
                 break;
             end
+        end
+        if tempFlag == false
+            outputImage(row-1, col-1) = 0;
         end
     end
 end
