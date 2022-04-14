@@ -1,0 +1,10 @@
+MNIST:
+
+learning rate	momentum		decay			training acc		testing acc
+===========================================================
+0.01			0.9			0		---	99.807		98.910
+0.001			0.9			0		---	
+
+Best: 0.005	0.9	0
+
+Fashion MNIST:
