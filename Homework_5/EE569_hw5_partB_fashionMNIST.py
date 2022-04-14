@@ -133,10 +133,10 @@ if __name__ == '__main__':
     net = Net()
 
     # training
-    learning_rate = 0.001
-    momentum = 0.9
+    learning_rate = 0.004
+    momentum = 0.78
     decay = 0
-    max_epoch = 20
+    max_epoch = 30
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(net.parameters(), lr=learning_rate, momentum=momentum, weight_decay = decay)
 
