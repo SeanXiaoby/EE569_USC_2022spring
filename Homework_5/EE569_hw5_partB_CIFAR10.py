@@ -133,7 +133,11 @@ if __name__ == '__main__':
     net = Net()
 
     # training
+<<<<<<< HEAD
+    learning_rate = 0.0003
+=======
     learning_rate = 0.001
+>>>>>>> 8f7352b238cafa604253c34f8a22e99cc0c08d6a
     momentum = 0.9
     decay = 0
     max_epoch = 50
