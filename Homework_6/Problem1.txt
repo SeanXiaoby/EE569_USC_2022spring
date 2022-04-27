@@ -9,6 +9,7 @@ Th1			Training_acc			Testing_acc		Training Time(s)		Num of parameters
 0.0005		0.9872			0.9677		266.39			6600
 0.002			0.9872			0.9677		264.84			6600
 0.0035		0.9867			0.9670		273.94			6575
+0.0075		0.9848			0.9627		257.66			6250
 
 
 Fashion Minist:
