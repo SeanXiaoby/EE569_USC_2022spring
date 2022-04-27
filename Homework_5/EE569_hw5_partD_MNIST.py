@@ -246,9 +246,5 @@ if __name__ == '__main__':
     print("Final testing accuracy: %.3f, standard deviation: %.3f" % (st.mean(testing_accuracies), st.stdev(testing_accuracies)))
 
 
-
-
-
-
     # confusionMatrix = getConfusion(net, test_loader)
     # show_confusion(confusionMatrix)
