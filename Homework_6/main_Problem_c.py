@@ -7,6 +7,9 @@ from sklearn.metrics import accuracy_score
 import xgboost as xgb
 import warnings, gc
 import time
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import plot_confusion_matrix
+import matplotlib.pyplot as plt
 
 # suppress warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -15,7 +18,7 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 np.random.seed(1)
 
 # Preprocess
-N_Train_Reduced = 10000    # 10000
+N_Train_Reduced = 50000    # 10000
 N_Train_Full = 60000     # 50000
 N_Test = 10000            # 10000
 
@@ -124,14 +127,14 @@ if __name__ == "__main__":
                    {'func':Shrink, 'win':5, 'stride':1, 'pad':0, 'pool':True}]
     # Setup the Saab Arguments
     SaabArgs = [{'num_AC_kernels':-1, 'needBias':False, 'cw':False},
-                {'num_AC_kernels':-1, 'needBias':True, 'cw':False},
-                {'num_AC_kernels':-1, 'needBias':True, 'cw':False}]
+                {'num_AC_kernels':-1, 'needBias':True, 'cw':True},
+                {'num_AC_kernels':-1, 'needBias':True, 'cw':True}]
     # Setup Concat Arguments
     concatArg = {'func':Concat}
     
     # -----------Module 1: Train PixelHop -----------
     # Construct PixelHop++ model
-    p2 = Pixelhop(depth=3, TH1=0.0075, TH2=0.001,
+    p2 = Pixelhop(depth=3, TH1=0.005, TH2=0.001,
                 SaabArgs=SaabArgs, shrinkArgs=shrinkArgs, concatArg=concatArg)
 
     # Train PixelHop++ on the reduced subset
@@ -155,7 +158,7 @@ if __name__ == "__main__":
     N_test, _, _, X_test = test_hop3_feats.shape
     train_hop3_reshaped = np.reshape(train_hop3_feats, (N_train, X_train))
     test_hop3_reshaped = np.reshape(test_hop3_feats, (N_test, X_test))
-    
+
 
     print('Running Module 3...')
     #---------- Module 3: Train XGBoost classifier on hop3 feature ---------
@@ -187,28 +190,42 @@ if __name__ == "__main__":
     print('Testing accuracy is: %.4f' % acc_test)
     print('Time cost: ', end_time-start_time, 's')
 
-    # get K1
-    print('Getting the number of K1 features...')
-    feats = get_feat(x_train, p2, num_layers=0)
-    _, _, _, K1 = feats.shape
-    print('Done.')
-
-    # get K2
-    print('Getting the number of K2 features...')
-    feats = get_feat(x_train, p2, num_layers=2)
-    _, _, _, K2 = feats.shape
-
-    print('Done.')
-
-    # get k3
-    print('Getting the number of K3 features...')
-    feats = get_feat(x_train, p2, num_layers=3)
-    _, _, _, K3 = feats.shape
-
-    print('Done.')
-
-    # Use the values for K1, K2, and K3 to calculate the number of parameters
+    # # get K1
+    # print('Getting the number of K1 features...')
+    # feats = get_feat(x_train, p2, num_layers=0)
+    # _, _, _, K1 = feats.shape
+    # print('Done.')
+    #
+    # # get K2
+    # print('Getting the number of K2 features...')
+    # feats = get_feat(x_train, p2, num_layers=2)
+    # _, _, _, K2 = feats.shape
+    #
+    # print('Done.')
+    #
+    # # get k3
+    # print('Getting the number of K3 features...')
+    # feats = get_feat(x_train, p2, num_layers=3)
+    # _, _, _, K3 = feats.shape
+    #
+    # print('Done.')
+    #
+    # # Use the values for K1, K2, and K3 to calculate the number of parameters
     # num_param = (K1 + K2 + K3) * 25
-    num_param = (5 * 5 * K1 + K1 * 5 * 5 * K2 + K2 * 5 * 5 * K3)
+    #
+    # print(f'The number of parameters in PixelHop++ is {num_param}')
 
-    print(f'The number of parameters in PixelHop++ is {num_param}')
+    plt.rcParams["figure.figsize"] = (20, 8)
+
+    # labels for mnist
+    mnist_labels = ['0', '1', '2', '3', '4',
+                      '5', '6', '7', '8', '9']
+
+    # labels for fashion-mnist
+    fashion_labels = ['T-shirt/top', 'Trouser', 'Pullover', 'Dress', 'Coat',
+                      'Sandal', 'Shirt', 'Sneaker', 'Bag', 'Ankle Boot']
+
+    confusion_matrix(y_train, pred_train, normalize= 'true')
+
+    plot_confusion_matrix(clf, train_hop3_reshaped, y_train, display_labels=mnist_labels, normalize='true', cmap='plasma')
+    plt.show()
