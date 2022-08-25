@@ -1,9 +1,9 @@
 # EE569 Digital Image Processing - Projects
- * @Author：[Boyang Xiao](https://www.linkedin.com/in/boyang-xiao-40b644225/)
- * @Email：boyangxi@usc.edu
- * @USC id：		3326730274  
- * @Date：		2022-01-30
- * @Instructor: [*Prof. C.-C. Jay Kuo*](https://viterbi.usc.edu/directory/faculty/Kuo/Chung-Chieh)
+ * @Author:         [Boyang Xiao](https://www.linkedin.com/in/boyang-xiao-40b644225/)
+ * @Email:          boyangxi@usc.edu
+ * @USC id:         3326730274  
+ * @Date of init:   2022-01-30
+ * @Instructor:     [*Prof. C.-C. Jay Kuo*](https://viterbi.usc.edu/directory/faculty/Kuo/Chung-Chieh)
 ***
 ##### 💻 Coding Environments:
  * @IDEs & languages：		
