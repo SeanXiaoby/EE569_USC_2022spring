@@ -15,6 +15,7 @@
  * @IDE extensions：	
     * C/C++ extensions for VScode 
     * Image Processing toolbox for MATLAB
+##### ⚠️Please do follow the README.md files in each projects carefully to compile and run the codes!!!
 ***
 ### 👉 Index :
 - #### Project - 1
